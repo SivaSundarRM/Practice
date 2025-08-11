@@ -1,0 +1,2 @@
+This is the content of file 1.
+It contains a simple message for testing purposes.
