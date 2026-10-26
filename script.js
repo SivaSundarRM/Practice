@@ -1,6 +1,6 @@
 const apiUrl = "https://api.themoviedb.org/3";
 const apiKey = "5694797ffe3b28f53036e86e4ae22bac";
-const imageBaseUrl = "https://image.tmdb.org/t/p/w500";
+const imageBaseUrl = "https://image.tmdb.org/t/p/original";
 const fallbackImage = "https://placehold.co/500x750/10243b/ffffff?text=No+Poster";
 
 const elements = {
@@ -35,35 +35,45 @@ async function tmdbFetch(path, params = {}) {
     return response.json();
 }
 
-async function getTrendingMovies() {
-    const data = await tmdbFetch("/trending/movie/week");
+async function getTrendingMovies(period = "week") {
+    const data = await tmdbFetch(`/trending/movie/${period}`);
     const movies = data.results || [];
+    console.log("Trending Movies:", movies);
     movies.forEach(m => activeMoviesMap.set(m.id, m));
-    return movies;
+    console.log(activeMoviesMap);
+    return movies.slice(0, 5);
 }
 
 async function getPopularMovies() {
     const data = await tmdbFetch("/movie/popular");
     const movies = data.results || [];
     movies.forEach(m => activeMoviesMap.set(m.id, m));
-    return movies;
+    return movies.slice(0, 5);
 }
 
 async function getUpcomingMovies() {
     const data = await tmdbFetch("/movie/upcoming");
     const movies = data.results || [];
     movies.forEach(m => activeMoviesMap.set(m.id, m));
-    return movies;
+    return movies.slice(0, 5);
 }
 
 async function getPopularPeople() {
     const data = await tmdbFetch("/person/popular");
-    return data.results || [];
+    return data.results.slice(0, 5) || [];
 }
 
+async function getPopularTVShows() {
+    const data = await tmdbFetch("/tv/popular");
+    const shows = data.results || [];
+    shows.forEach(s => activeMoviesMap.set(s.id, s));
+    return shows.slice(0, 5);
+}   
 function renderMovieGrid(container, movies) {
     if (!container) return;
+
     container.replaceChildren();
+
     if (!movies.length) {
         container.innerHTML = `
             <div class="col-12">
@@ -72,17 +82,24 @@ function renderMovieGrid(container, movies) {
         `;
         return;
     }
+
     movies.forEach(movie => {
         activeMoviesMap.set(movie.id, movie);
 
         const column = document.createElement("div");
-        column.className = "col";
+        column.className = "col-6 col-sm-4 col-md-3 col-lg-2";
+
         const poster = movie.poster_path
             ? `${imageBaseUrl}${movie.poster_path}`
             : fallbackImage;
+
         const title = movie.title || movie.name || "Untitled";
         const rating = Number(movie.vote_average || 0).toFixed(1);
-        
+
+        const isSaved = getWatchlist().some(
+            savedMovie => savedMovie.id === movie.id
+        );
+
         column.innerHTML = `
             <article class="movie-card card h-100 shadow-sm">
                 <img
@@ -91,6 +108,7 @@ function renderMovieGrid(container, movies) {
                     alt="${title}"
                     loading="lazy"
                 >
+
                 <div class="movie-card__body card-body d-flex flex-column">
                     <h3 class="movie-card__title card-title h5">
                         ${title}
@@ -101,17 +119,19 @@ function renderMovieGrid(container, movies) {
                     </p>
 
                     <button
-                        class="btn btn-dark mt-auto movie-card__watchlist-button"
+                        class="btn ${isSaved ? "btn-success" : "btn-outline-dark"} mt-auto movie-card__watchlist-button"
                         type="button"
                         data-movie-id="${movie.id}"
+                        aria-pressed="${isSaved}"
                     >
-                        Add to Watchlist
+                        ${isSaved ? "✓ In Watchlist" : "＋ Add to Watchlist"}
                     </button>
                 </div>
             </article>
         `;
 
         const image = column.querySelector("img");
+
         image.addEventListener("error", () => {
             image.src = fallbackImage;
         }, { once: true });
@@ -119,7 +139,6 @@ function renderMovieGrid(container, movies) {
         container.appendChild(column);
     });
 }
-
 function renderPeopleGrid(container, people) {
     if (!container) return;
     container.replaceChildren();
@@ -135,7 +154,7 @@ function renderPeopleGrid(container, people) {
 
     people.forEach(person => {
         const column = document.createElement("div");
-        column.className = "col";
+        column.className = "col-6 col-sm-4 col-md-3 col-lg-2";
         const poster = person.profile_path
             ? `${imageBaseUrl}${person.profile_path}`
             : fallbackImage;
@@ -196,7 +215,10 @@ function renderWatchlist() {
     elements.watchlistList
         .querySelectorAll(".movie-card__watchlist-button")
         .forEach(button => {
-            button.textContent = "Remove from Watchlist";
+            button.textContent = "✓ Remove from Watchlist";
+            button.classList.remove("btn-outline-dark");
+            button.classList.add("btn-success");
+            button.setAttribute("aria-pressed", "true");
         });
 }
 
@@ -215,11 +237,18 @@ document.addEventListener("click", event => {
     } else {
         const movieData = activeMoviesMap.get(movieId);
         if (!movieData) return;
-
         updatedWatchlist = [...watchlist, movieData];
     }
 
     saveWatchlist(updatedWatchlist);
+    document.querySelectorAll(`.movie-card__watchlist-button[data-movie-id="${movieId}"]`)
+        .forEach(cardButton => {
+            const isNowSaved = updatedWatchlist.some(movie => movie.id === movieId);
+            cardButton.textContent = isNowSaved ? "✓ In Watchlist" : "＋ Add to Watchlist";
+            cardButton.classList.toggle("btn-success", isNowSaved);
+            cardButton.classList.toggle("btn-outline-dark", !isNowSaved);
+            cardButton.setAttribute("aria-pressed", String(isNowSaved));
+        });
     renderWatchlist();
 });
 
@@ -280,31 +309,157 @@ function setActiveTab(selector, activeButton) {
 }
 
 async function init() {
-    document.querySelectorAll("[data-period]").forEach((button) => {
-        button.addEventListener("click", () => {
-            const period = button.dataset.period;
-            setActiveTab("[data-period]", button);
+    const trendingButtons = document.querySelectorAll(
+        "#trending [data-period]"
+    );
+
+    trendingButtons.forEach(button => {
+        button.addEventListener("click", async () => {
+
+            trendingButtons.forEach(item => {
+                const active = item === button;
+
+                item.classList.toggle("btn-dark", active);
+                item.classList.toggle("btn-outline-dark", !active);
+                item.classList.toggle("is-active", active);
+
+                item.setAttribute("aria-pressed", String(active));
+            });
+
+            try {
+                const movies = await getTrendingMovies(
+                    button.dataset.period
+                );
+
+                renderMovieGrid(elements.trendingList, movies);
+
+                const heading = document.getElementById(
+                    "trendingHeading"
+                );
+
+                if (heading) {
+                    heading.textContent =
+                        button.dataset.period === "day"
+                            ? "Trending Today"
+                            : "Trending This Week";
+                }
+
+            } catch (error) {
+                console.error(
+                    "Unable to update trending movies:",
+                    error
+                );
+            }
         });
     });
-        
+
+    const popularButtons = document.querySelectorAll(
+        "#popular [data-content-type]"
+    );
+
+    popularButtons.forEach(button => {
+        button.addEventListener("click", async () => {
+
+            const contentType = button.dataset.contentType;
+
+            popularButtons.forEach(item => {
+                const active = item === button;
+
+                item.classList.toggle("btn-dark", active);
+                item.classList.toggle("btn-outline-dark", !active);
+                item.classList.toggle("is-active", active);
+
+                item.setAttribute("aria-pressed", String(active));
+            });
+
+            try {
+                let content;
+
+                if (contentType === "movie") {
+                    content = await getPopularMovies();
+                } else if (contentType === "tv") {
+                    content = await getPopularTVShows();
+                } else if (contentType === "person") {
+                    content = await getPopularPeople();
+                    renderPeopleGrid(elements.popularPeopleList, content);
+                }
+                else {
+                    console.error(
+                        "Unknown content type:",
+                        contentType
+                    );
+                    return;
+                }
+                renderMovieGrid(elements.popularList, content);
+
+            } catch (error) {
+                console.error(
+                    "Unable to update popular content:",
+                    error
+                );
+            }
+        });
+    });
+
+    document.querySelectorAll(
+        '[data-bs-toggle="button"]:not([data-content-type])'
+    ).forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            const pressed =
+                button.getAttribute("aria-pressed") !== "true";
+
+            button.setAttribute(
+                "aria-pressed",
+                String(pressed)
+            );
+
+            button.classList.toggle("active", pressed);
+        });
+    });
+
     try {
-        const [trendingMovies, popularMovies, upcomingMovies, popularPeople] =
-            await Promise.all([
-                getTrendingMovies(),
-                getPopularMovies(),
-                getUpcomingMovies(),
-                getPopularPeople()
-            ]);
-            
-        renderMovieGrid(elements.trendingList, trendingMovies);
-        renderMovieGrid(elements.popularList, popularMovies);
-        renderMovieGrid(elements.trailerList, upcomingMovies);
-        renderPeopleGrid(elements.popularPeopleList, popularPeople);
+        const [
+            trendingMovies,
+            popularMovies,
+            upcomingMovies,
+            popularPeople
+        ] = await Promise.all([
+            getTrendingMovies("day"),
+            getPopularMovies(),
+            getUpcomingMovies(),
+            getPopularPeople()
+        ]);
+
+        // Render trending movies
+        renderMovieGrid(
+            elements.trendingList,
+            trendingMovies
+        );
+
+        renderMovieGrid(
+            elements.popularList,
+            popularMovies
+        );
+
+        renderMovieGrid(
+            elements.trailerList,
+            upcomingMovies
+        );
+
+        renderPeopleGrid(
+            elements.popularPeopleList,
+            popularPeople
+        );
 
         renderWatchlist();
 
     } catch (error) {
-        console.error("Error initializing Movie Explorer:", error);
+        console.error(
+            "Error initializing Movie Explorer:",
+            error
+        );
     }
 }
 

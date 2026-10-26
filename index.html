@@ -29,9 +29,9 @@
                     aria-controls="pills-contact" aria-selected="false">People</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill"
-                    data-bs-target="#pills-contact" type="button" role="tab"
-                    aria-controls="pills-contact" aria-selected="false">Awards</button>
+                <button class="nav-link" id="pills-awards-tab" data-bs-toggle="pill"
+                    data-bs-target="#pills-awards" type="button" role="tab"
+                    aria-controls="pills-awards" aria-selected="false">Awards</button>
             </li>
         
         <form class="d-flex justify-content-end" role="search">
@@ -63,11 +63,11 @@
                         <h2 class="section-heading__title" id="trendingHeading">Trending</h2>
                     </div>
                     <div class="btn-group section-heading__tabs" role="group" aria-label="Trending time period">
-                        <button class="btn btn-dark section-heading__tab is-active" type="button" data-period="day" data-bs-toggle="button" aria-pressed="true">Today</button>
-                        <button class="btn btn-outline-dark section-heading__tab" type="button" data-period="week" data-bs-toggle="button" aria-pressed="false">This week</button>
+                        <button class="btn btn-dark section-heading__tab is-active" type="button" data-period="day" aria-pressed="true">Today</button>
+                        <button class="btn btn-outline-dark section-heading__tab" type="button" data-period="week" aria-pressed="false">This week</button>
                     </div>
                 </div>
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-1" id="trendingList">
+                <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 row-cols-xl-6 g-3 mt-1" id="trendingList">
                     <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
                     <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
                     <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
@@ -82,14 +82,14 @@
                     <div>
                         <p class="section-heading__eyebrow">WHAT PEOPLE ARE WATCHING</p>
                         <h2 class="section-heading__title" id="popularHeading">Popular</h2>
-                        <div class="btn-group">
-                            <button class="btn btn-dark section-heading__tab is-active" type="button" data-period="day" aria-pressed="true">Movies</button>
-                            <button class="btn btn-outline-dark section-heading__tab" type="button" data-period="week" aria-pressed="false">TV Shows</button>
-                            <button class="btn btn-outline-dark section-heading__tab" type="button" data-period="week" aria-pressed="false">People</button>
+                        <div class="btn-group" role="group" aria-label="Popular content type">
+                            <button class="btn btn-dark section-heading__tab is-active" type="button" data-content-type="movies" aria-pressed="true">Movies</button>
+                            <button class="btn btn-outline-dark section-heading__tab" type="button" data-content-type="tv" aria-pressed="false">TV Shows</button>
+                            <button class="btn btn-outline-dark section-heading__tab" type="button" data-content-type="people" aria-pressed="false">People</button>
                         </div>
                     </div>
                 </div>
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-1" id="popularList">
+                <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 row-cols-xl-6 g-3 mt-1" id="popularList">
                     <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
                     <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
                     <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
@@ -104,7 +104,7 @@
                     <h2 class="section-heading__title">Upcoming movies</h2>
                     <p class="section-heading__description">Explore upcoming releases and open a title to see available trailers.</p>
                 </div>
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-1" id="trailerList">
+                <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 row-cols-xl-6 g-3 mt-1" id="trailerList">
                     <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
                     <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
                     <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
@@ -120,7 +120,7 @@
                         <h2 class="section-heading__title" id="watchlistHeading">Watchlist</h2>
                     </div>
                 </div>
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-1" id="watchlistList">
+                <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 row-cols-xl-6 g-3 mt-1" id="watchlistList">
                     <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
                     <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
                     <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
@@ -130,13 +130,13 @@
 
         </section>
         <section class="content-section" id="popularlist">
-    <div class="contianer">
+    <div class="container">
         <div class="section-heading d-flex flex-wrap align-items-center justify-content-between gap-2">
             <div>
                 <h2 class="section-heading__title" id="popularlistHeading">Popular List</h2>
             </div>
         </div>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-1" id="popularPeopleGrid">
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 row-cols-xl-6 g-3 mt-1" id="popularPeopleGrid">
             <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
             <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
             <div class="col"><div class="placeholder-glow"><span class="placeholder col-12 movie-grid__placeholder"></span></div></div>
