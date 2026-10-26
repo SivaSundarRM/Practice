@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Details</title>
+</head>
+<body>
+    <header class="header">
+        <h1 class="header__logo">Movies Explorer</h1>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a href="index.html" class="btn btn-outline-primary">← Back to discover</a>
+        </nav>
+    </header>
+
+    <main class="details">
+        <section class="details-hero" id="detailsHero">
+            <div class="details-hero__backdrop" id="backdrop"></div>
+            <div class="container details-hero__container">
+                <div class="row align-items-center g-4 details-hero__row">
+                    <div class="col-7 col-sm-5 col-md-4 col-lg-3">
+                        <img class="details-hero__poster" id="poster" src="" alt="Title poster">
+                    </div>
+                    <div class="col-12 col-md-8 col-lg-9">
+                        <p class="details-hero__eyebrow" id="typeLabel">MOVIE EXPLORER</p>
+                        <h1 class="details-hero__title" id="title">Loading title…</h1>
+                        <p class="details-hero__meta" id="meta"></p>
+                        <div class="details-hero__score-row">
+                            <span class="details-hero__score" id="score">—</span>
+                            <span class="details-hero__score-label">TMDB user score</span>
+                        </div>
+                        <h2 class="details-hero__subheading">Overview</h2>
+                        <p class="details-hero__overview" id="overview">Fetching details…</p>
+                        <button class="btn btn-warning details-hero__watchlist-button" id="watchlist" type="button">＋ Add to watchlist</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="container">
+                <div class="section-heading">
+                    <p class="section-heading__eyebrow">THE PEOPLE BEHIND THE STORY</p>
+                    <h2 class="section-heading__title">Top cast</h2>
+                </div>
+                <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3 cast-grid" id="cast"></div>
+            </div>
+        </section>
+        <section class="content-section">
+            <div class="container">
+                <div class="section-heading">
+                    <p class="section-heading__eyebrow">YOU MIGHT ALSO LIKE</p>
+                    <h2 class="section-heading__title">Recommendations</h2>
+                </div>
+                <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4 movie-grid" id="recommendations"></div>
+            </div>
+        </section>
+        <section class="content-section">
+            <div class="container">
+                <div class="section-heading">
+                    <p class="section-heading__eyebrow">WATCH THE TRAILER</p>
+                    <h2 class="section-heading__title">Trailer</h2>
+                </div>
+                <div class="ratio ratio-16x9" id="trailerContainer">
+                    <iframe id="trailer" src="" title="YouTube video player" allowfullscreen></iframe>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="details.js"></script>
+</body>
+</html>
